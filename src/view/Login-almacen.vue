@@ -1,5 +1,6 @@
 <template>
      <div class="container-login">
+        <!-- login -->
         <div class="container-text">
              <img src="@/assets/logo-login.png" alt="" width="300">
         </div>
