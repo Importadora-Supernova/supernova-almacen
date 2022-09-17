@@ -3,6 +3,11 @@ import App from './App.vue'
 import vuetify from './plugins/vuetify'
 import router from './router'
 import axios from 'axios'
+import store from './store'
+import Chartkick from 'vue-chartkick'
+import Chart from 'chart.js'
+
+Vue.use(Chartkick.use(Chart))
 
 Vue.config.productionTip = false
 
@@ -20,5 +25,6 @@ new Vue({
     vuetify,
     router,
     axios,
+    store,
     render: h => h(App)
 }).$mount('#app')

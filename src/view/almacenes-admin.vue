@@ -1,8 +1,9 @@
 <template>
-   <v-container>
+   <v-container class="px-5 py-3">
 
        <v-dialog max-width="500" v-model="modal_almacen">
           <v-card >
+            <v-form  ref="form"  lazy-validation>
               <v-card-title class="primary d-flex justify-space-between">
                 <h4 class="white--text">Agregar un almacen nuevo</h4>
                 <v-icon large color="white">mdi-warehouse</v-icon>
@@ -10,11 +11,11 @@
               <v-card-text>
                  <v-row class="mt-3">
                     <v-col cols="12">
-                        <v-text-field type="text" label="Nombre del almacen" v-model="almacen.nombre_almacen"></v-text-field>
-                        <v-text-field type="text" label="Tipo de Almacen" v-model="almacen.tipo"></v-text-field>
+                        <v-text-field type="text" label="Nombre del almacen" :rules="[rul.required]" v-model="almacen.nombre_almacen"></v-text-field>
                         <v-autocomplete
                         label="Status"
                         :items="status"
+                        :rules="[rul.selectReq]"
                         item-text="nombre_status"
                         item-value="id"
                         v-model="id_status"
@@ -29,6 +30,7 @@
                     <v-btn class="primary ml-2" @click="sendFormData">Guardar</v-btn>
                 </v-col>
               </v-card-actions>
+            </v-form>
           </v-card>
        </v-dialog>
 
@@ -73,6 +75,7 @@
 
 <script>
 import axios from 'axios'
+import {mapMutations} from 'vuex'
 import cardAlmacen from '../components/card-almacen.vue'
 export default {
     components:{cardAlmacen},
@@ -90,11 +93,18 @@ export default {
                 tipo:"",
                 status:null,
                 fecha_create:''
-            }
+            },
+            rul: {
+                required: value => !!value ||  'campo requerido',
+                email: value => /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.([a-zA-Z]{2,4})+$/.test(value) || 'Email incorrect',
+                selectReq: value => !!value || 'Debes seleccionar una opcion',
+                min6: v => (v || '').length >= 6 || 'min 6 character',
+            },   
         }
     },
 
     mounted(){
+        this.setActiveOverlay();
         this.getAllAlmacenes();
         this.getAllStatus();
     },
@@ -116,12 +126,20 @@ export default {
 
     methods:{
 
+        ...mapMutations('overlay',['setActiveOverlay','setDesactiveOverlay']),
+
+        ...mapMutations('modalAlert',['setActiveModal']),
+
         async getAllAlmacenes(){
             try{
                 const response = await axios.get('/api/')
                 this.almacenes = response.data
+                setTimeout(()=>{
+                    this.setDesactiveOverlay()
+                },500);
             }catch(e){
                 console.log(e)
+                this.setDesactiveOverlay()
             }
         },
 
@@ -133,18 +151,45 @@ export default {
             }catch(e){
                 console.log(e)
             }
+            
         },
 
         async sendFormData(){
-            this.almacen.fecha_create = this.fechaActual
-            try{
-                const response = await axios.post('/api/',this.almacen);
-                this.getAllAlmacenes()
-                this.modal_almacen = false
-                console.log(response.data)
-            }catch(e){
-                console.log(e);
+             if (this.$refs.form.validate()){
+                 this.modal_almacen = false
+                this.setActiveOverlay();
+                this.almacen.fecha_create = this.fechaActual
+                try{
+                    const response = await axios.post('/api/',this.almacen);
+                    this.getAllAlmacenes()
+                    setTimeout(()=>{
+                        this.setDesactiveOverlay()
+                    },1000);
+                    let data = {"status":"success","icon":"mdi-check","title":"Creado","text":'El almacen fue creado satisfactoriamente',"textButton":"Cerrar" }
+                    this.setActiveModal(data)
+                    this.resetFields()
+                    console.log(response.data)
+                }catch(e){
+                    console.log(e);
+                    this.setDesactiveOverlay()
+                    let data = {"status":"error","icon":"mdi-close-multiple","title":"A ocurrido un error","text":e,"textButton":"Intente de nuevo" }
+                    this.setActiveModal(data)
+                    setTimeout(()=>{
+                        this.modal_almacen = true
+                    },1000);
+
+                }
+               
+            }else{
+                let data = {"status":"error","icon":"mdi-close","title":"Ocurrio un error","text":"Debe llenar los campos requeridos","textButton":"Intentar de nuevo" }
+                this.setActiveModal(data)
+                this.modal_almacen = true
             }
+           
+        },
+
+        resetFields(){
+            this.almacen.nombre_almacen = '',this.almacen.tipo = '', this.almacen.status = 1
         },
 
         selectStatus(id){
@@ -162,15 +207,26 @@ export default {
         },
 
         async deleteAlmacen(){
+            this.modal_delete = false
+            this.setActiveOverlay()
             try{
                 const response = await axios.delete(`/api/?id=${this.id_delete}`);
-                console.log(response.data);
+                console.log(response.data)
                 this.getAllAlmacenes()
                 this.modal_delete = false
                 this.id_delete = null
                 this.almacen_delete = ''
+                setTimeout(()=>{
+                    this.setDesactiveOverlay()
+                },1000);
+                let data = {"status":"success","icon":"mdi-check","title":"Eliminado","text":'El almacen fue eliminado satisfactoriamente',"textButton":"Cerrar" }
+                this.setActiveModal(data)
             }catch(e){
-                console.log(e)
+                console.log(e);
+                this.setDesactiveOverlay()
+                let data = {"status":"error","icon":"mdi-close-multiple","title":"A ocurrido un error","text":e,"textButton":"Intente de nuevo" }
+                this.setActiveModal(data)
+                this.modal_delete = true
             }
         }
     }

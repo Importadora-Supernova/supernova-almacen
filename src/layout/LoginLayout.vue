@@ -13,14 +13,19 @@ export default {
 <style lang="scss">
 
     .login{
-        background-color: #139789 !important;
-        // background-image: url('../assets/background-login-realstate.png') !important;
-        // background-repeat: no-repeat !important;
-        // background-position: center !important;
-        // background-size: cover !important;
-        @media(max-width:425px){
-            // background-image: url('../assets/background-login-real-state-mob.png') !important;
+        // background-color: #139789 !important;
+        background-image: url('../assets/background-supernova.png') !important;
+        background-repeat: no-repeat !important;
+        background-position: center !important;
+        background-size: cover !important;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        @media(max-width:620px){
+             background-image: url('../assets/background-supernova-mob.png') !important;
         }
+        
     }
 
 </style>
