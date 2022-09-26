@@ -26,7 +26,11 @@ export default {
         async getDataTraslados({ commit }) {
             try {
 
-                const response = await axios.get('api/traslados');
+                const response = await axios.get('api/traslados', {
+                    headers: {
+                        'Bearer': sessionStorage.getItem('token')
+                    }
+                });
 
                 if (response.status == 200) {
                     commit('setData', response.data)

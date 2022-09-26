@@ -6,25 +6,25 @@
                   <v-row class="pt-5">
                      <v-col cols="12" sm="4" md="4">
                           <v-autocomplete
-                                :items="products"
+                                :items="productsCodigo"
                                 item-text="fullname"
                                 item-value="id"
                                 label="Filtrar producto por Codigo o Nombre"
                                 return-object
                                 v-model="producto"
-                                @change="getProductId(producto)"
+                                @change="getProductCodigo(producto)"
                                 ></v-autocomplete>
                      </v-col>
                   </v-row>
                   <v-data-table
                      :headers="cabecera"
-                     :items="productoAlmacenes"
+                     :items="products"
                      class="py-7"
                   >
                      <template v-slot:top>
                         <v-toolbar flat class="pb-5">
                         <v-toolbar-title
-                           ><v-icon class="mr-5" color="primary">mdi-cart </v-icon> Productos por Almacen </v-toolbar-title
+                           ><v-icon class="mr-5" color="primary">mdi-cart </v-icon> Productos</v-toolbar-title
                         >
                         <v-divider class="mx-4" inset vertical></v-divider>
                         <v-spacer></v-spacer>
@@ -61,17 +61,12 @@ export default {
       return{
          productoAlmacenes:[],
          products:[],
+         productsCodigo:[],
          producto:{},
            cabecera:[
                  {
-                text: "ID del almacen",
-                value: "id_almacen",
-                align: "center",
-                class: "primary white--text px-0 mx-0",
-                },
-                 {
-                text: "Nombre de Almacen",
-                value: "nombre_almacen",
+                text: "ID producto",
+                value: "id",
                 align: "center",
                 class: "primary white--text px-0 mx-0",
                 },
@@ -89,7 +84,7 @@ export default {
                 },
                  {
                     text: "Cantidad(unidades)",
-                    value: "cantidad",
+                    value: "almacen",
                     align: "center",
                     class: "primary white--text px-0 mx-0",
                 },
@@ -105,47 +100,60 @@ export default {
 
    mounted(){
       this.getAllProducts();
+      this.getAllProductsCodigo();
    },
 
    methods:{
 
-      ...mapMutations('modalAlert',['setActiveModal','setDesactiveModal']),
+         ...mapMutations('modalAlert',['setActiveModal','setDesactiveModal']),
 
-      ...mapMutations('overlay',['setActiveOverlay','setDesactiveOverlay']),
+         ...mapMutations('overlay',['setActiveOverlay','setDesactiveOverlay']),
 
-      async getAllProducts(){
-            try{
-                const response = await axios.get('/api/productos?total=total');
-                this.products = response.data;
-            }catch(e){
-                console.log(e);
-            }
+         async getAllProducts(){
+               try{
+                  const response = await axios.get('/api/productos?total=total',{
+                     // headers:
+                     //    {
+                     //        'Bearer': sessionStorage.getItem('token')
+                     //    } 
+                  });
+                  this.products = response.data;
+               }catch(e){
+                  console.log(e);
+               }
+         },
+
+         async getAllProductsCodigo(){
+               try{
+                  const response = await axios.get('/api/productos',{
+                     // headers:
+                     //    {
+                     //        'Bearer': sessionStorage.getItem('token')
+                     //    } 
+                  });
+                  this.productsCodigo = response.data;
+               }catch(e){
+                  console.log(e);
+               }
+         },
+
+         async getProductCodigo(product){
+               try{
+                  const response = await axios.get(`/api/productos?codigo=${product.codigo}`,{
+                     // headers:
+                     //    {
+                     //        'Bearer': sessionStorage.getItem('token')
+                     //    } 
+                  });
+                  this.products = response.data;
+               }catch(e){
+                  console.log(e);
+               }
+         },
+
+         
+      
       },
-      async getProductId(producto){
-            this.setActiveOverlay()
-            let id = parseInt(producto.id);
-            try{
-                const response = await axios.get(`/api/cantidadProductosAlmacen?id=${id}`);
-                console.log(response.data)
-                this.productoAlmacenes = response.data
-                if(this.productoAlmacenes.length === 0){
-                  this.setDesactiveOverlay()
-                  let data = {"status":"warning","icon":"mdi-alert-circle","title":"Alerta","text":'Este producto no esta asignado en almacenes',"textButton":"Cerrar" }
-                  this.setActiveModal(data)
-                  setTimeout(()=>{
-                     this.setDesactiveModal()
-                  },3500);
-                }else{
-                   this.setDesactiveOverlay()
-                }
-                
-            }catch(e){
-                console.log(e);
-                  let data = {"status":"error","icon":"mdi-alert-circle","title":"Ocurrio un error","text":e,"textButton":"Cerrar" }
-                  this.setActiveModal(data)
-            }
-        },
-   }
 }
 </script>
 

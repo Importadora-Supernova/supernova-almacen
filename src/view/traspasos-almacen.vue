@@ -151,7 +151,12 @@ export default {
 
          async getAllAlmacenes(){
             try{
-                const response = await axios.get('/api/')
+                const response = await axios.get('/api/',{
+                    //  headers:
+                    //     {
+                    //         'Bearer': sessionStorage.getItem('token')
+                    //     } 
+                })
                 this.almacenes = response.data
 
                this.origenes =  [...this.almacenes];
@@ -167,7 +172,12 @@ export default {
             const filtro = this.almacenes.filter(item => item.id != id);
             this.destinos = [...filtro];
             try{
-                const response = await axios.get(`/api/productosAlmacen?id=${id}`);
+                const response = await axios.get(`/api/productosAlmacen?id=${id}`,{
+                    //  headers:
+                    //     {
+                    //         'Bearer': sessionStorage.getItem('token')
+                    //     } 
+                });
                 this.products = response.data
                 console.log(response.data)
             }catch(e){
@@ -233,7 +243,12 @@ export default {
 
         async transferProducto(data){
             try{
-                const response = await axios.post(`/api/traslados`,data);
+                const response = await axios.post(`/api/traslados`,data,{
+                    //  headers:
+                    //     {
+                    //         'Bearer': sessionStorage.getItem('token')
+                    //     } 
+                });
                 if(response.status == 200){
                     let data = {"status":"success","icon":"mdi-compare-horizontal","title":"Exitoso","text":response.data.mensaje,"textButton":"Cerrar" }
                     this.setActiveModal(data)

@@ -64,7 +64,37 @@ const router = new Router({
             },
             component: () =>
                 import ('../view/almacen-general.vue'),
-        }
+        },
+        {
+            path: '/productosAlmacen',
+            name: 'productosAlmacen',
+            meta: {
+                layout: 'dashboard-layout',
+                auth: true
+            },
+            component: () =>
+                import ('../view/productos-almacen.vue'),
+        },
+        {
+            path: '/garantia/almacen',
+            name: 'garantiaAlmacen',
+            meta: {
+                layout: 'dashboard-layout',
+                auth: true
+            },
+            component: () =>
+                import ('../view/almacen-garantia-almacen.vue'),
+        },
+        {
+            path: '/garantia/tienda',
+            name: 'garantiaTinda',
+            meta: {
+                layout: 'dashboard-layout',
+                auth: true
+            },
+            component: () =>
+                import ('../view/almacen-garantia-tienda.vue'),
+        },
 
     ]
 

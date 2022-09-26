@@ -132,7 +132,11 @@ export default {
 
         async getAllAlmacenes(){
             try{
-                const response = await axios.get('/api/')
+                const response = await axios.get('/api/',{
+                    // headers:{
+                    //     'Bearer' : sessionStorage.getItem('token')
+                    // }
+                })
                 this.almacenes = response.data
                 setTimeout(()=>{
                     this.setDesactiveOverlay()
@@ -145,7 +149,11 @@ export default {
 
          async getAllStatus(){
             try{
-                const response = await axios.get('/api/status')
+                const response = await axios.get('/api/status',{
+                    // headers:{
+                    //     'Bearer' : sessionStorage.getItem('token')
+                    // }
+                })
                 this.status = response.data
                 console.log(this.status)
             }catch(e){
@@ -160,7 +168,11 @@ export default {
                 this.setActiveOverlay();
                 this.almacen.fecha_create = this.fechaActual
                 try{
-                    const response = await axios.post('/api/',this.almacen);
+                    const response = await axios.post('/api/',this.almacen,{
+                        // headers:{
+                        //     'Bearer' : sessionStorage.getItem('token')
+                        // }
+                    });
                     this.getAllAlmacenes()
                     setTimeout(()=>{
                         this.setDesactiveOverlay()
@@ -210,7 +222,11 @@ export default {
             this.modal_delete = false
             this.setActiveOverlay()
             try{
-                const response = await axios.delete(`/api/?id=${this.id_delete}`);
+                const response = await axios.delete(`/api/?id=${this.id_delete}`,{
+                    // headers:{
+                    //     'Bearer' : sessionStorage.getItem('token')
+                    // }
+                });
                 console.log(response.data)
                 this.getAllAlmacenes()
                 this.modal_delete = false

@@ -20,6 +20,7 @@ Vue.component('dashboard-layout', DashboardLayout);
 
 axios.defaults.baseURL = 'https://programacion.importadorasupernova.com';
 axios.defaults.timeout = 100000;
+//axios.defaults.headers.common['Authorization'] = sessionStorage.getItem('token');
 
 new Vue({
     vuetify,

@@ -82,29 +82,29 @@ export default {
         ...mapState('traslados',['Traslados'])
     },
     mounted(){
-        // this.getDataTraslados();
-        // this.getAllCantidades();
-        // this.getAllProducts();
-        // this.getAllAlmacenes();
-        this.general();
+        this.generalData();
     },
     methods:{
 
         ...mapActions('traslados',['getDataTraslados']),
 
 
-        async general(){
+        async generalData(){
             const content = await Promise.all([
                 this.getAllCantidades(),this.getAllProducts(),this.getAllAlmacenes(),this.getDataTraslados()
             ])
-            console.log(content);
             return content;
         },
 
         async getAllCantidades(){
 
             try{
-                const response = await axios.get('/api/cantidadProductosAlmacen');
+                const response = await axios.get('/api/cantidadProductosAlmacen',{
+                    // headers:
+                        // {
+                        //     'Bearer': sessionStorage.getItem('token')
+                        // } 
+                });
                 this.datos = response.data
                 this.renderData(response.data);
                  return this.datos;
@@ -134,7 +134,12 @@ export default {
 
         async getAllProducts(){
             try{
-                const response = await axios.get('/api/productos?total=total');
+                const response = await axios.get('/api/productos?total=total',{
+                    // headers:
+                    //     {
+                    //         'Bearer': sessionStorage.getItem('token')
+                    //     } 
+                });
                 this.products = response.data;
                 return this.products;
             }catch(e){
@@ -144,7 +149,12 @@ export default {
 
           async getAllAlmacenes(){
             try{
-                const response = await axios.get('/api/')
+                const response = await axios.get('/api/',{
+                    // headers:
+                    //     {
+                    //         'Bearer': sessionStorage.getItem('token')
+                    //     } 
+                })
                 this.almacenes = response.data
             }catch(e){
                 console.log(e)
@@ -164,7 +174,7 @@ export default {
         padding-bottom: 0px;
         border-radius: 5px;
         background: rgb(8,34,138);
-        background: linear-gradient(90deg, rgba(8,34,138,1) 33%, rgba(2,167,225,1) 72%);
+        background: linear-gradient(90deg, rgba(8,34,138,1) 33%, rgb(3, 82, 111) 72%);
     }
     .card-info{
         height: 460px !important;
@@ -184,7 +194,7 @@ export default {
             border-radius: 5px;
             &:nth-child(1){
                 background: rgb(8,34,138);
-                background: linear-gradient(90deg, rgba(8,34,138,1) 33%, rgba(2,167,225,1) 72%);
+                background: linear-gradient(90deg, rgba(8,34,138,1) 33%, rgb(3, 77, 104) 72%);
             }
             &:nth-child(2){
                 background: rgb(8,126,138);
@@ -192,7 +202,7 @@ export default {
             }
             &:nth-child(3){
                 background: rgb(8,11,138);
-                background: linear-gradient(90deg, rgba(8,11,138,1) 36%, rgba(2,156,225,1) 72%);
+                background: linear-gradient(90deg, rgba(8,11,138,1) 36%, rgb(6, 63, 89) 72%);
             }
         }
         

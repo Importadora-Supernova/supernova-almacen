@@ -6,6 +6,7 @@ import overlay from './modules/Overlay'
 import modalAlert from './modules/ModalAlert'
 import traslados from './modules/traslados'
 import login from './modules/login'
+import notification from './modules/Notifications'
 
 Vue.use(Vuex)
 
@@ -15,7 +16,8 @@ export default new Vuex.Store({
         overlay,
         modalAlert,
         traslados,
-        login
+        login,
+        notification
     },
 
     state: {

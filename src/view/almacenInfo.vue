@@ -50,10 +50,10 @@
                                                 <td>{{ item.codigo }}</td>
                                                 <td>{{ item.nombre }}</td>
                                                 <td>
-                                                    <v-text-field type="number" v-model="productosCodigo[index].cantidad"></v-text-field>
+                                                    <v-text-field type="number" v-model="productosCodigo[index].cantidad" placeholder="0"></v-text-field>
                                                 </td>
                                                 <td>
-                                                    <v-btn class="primary" @click="addProductAlmacen(item)">Agregar <v-icon class="ml-1">mdi-plus-circle</v-icon> </v-btn>
+                                                    <v-btn class="primary" @click="addProductAlmacen(item,index)">Agregar <v-icon class="ml-1">mdi-plus-circle</v-icon> </v-btn>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -67,56 +67,90 @@
             </v-col>
         </v-row>
 
-       <v-card>
-            <v-card-title>
-                <v-icon class="mr-2" color="primary" large>mdi-warehouse</v-icon>
-                {{datosAlmacen.nombre_almacen}}
-                <v-spacer></v-spacer>
-                <v-spacer></v-spacer>
-                <v-text-field
-                    v-model="search"
-                    append-icon="mdi-magnify"
-                    label="Buscar"
-                    single-line
-                    hide-details
-                ></v-text-field>
-                <!-- <v-btn class="primary ml-2">+ ADD NEW PRODUCTO</v-btn> -->
-            </v-card-title>
-            <v-data-table
-            :headers="headers"
-            :items="productosAlmacen"
-            :search="search"
-            >
-            <!-- <template v-slot:[`item.actions`]="{}"> -->
-                <!-- <v-tooltip bottom>
-                    <template v-slot:activator="{ on, attrs }">
-                        <v-btn
-                        icon
-                        color="warning"
-                        v-bind="attrs"
-                        v-on="on"
+        <v-row>
+            <v-col cols="6">
+                <v-card>
+                    <v-card-title>
+                        <v-icon class="mr-2" color="primary" large>mdi-warehouse</v-icon>
+                        {{datosAlmacen.nombre_almacen}} Historial
+                        <v-spacer></v-spacer>
+                        <v-spacer></v-spacer>
+                         <v-tooltip bottom>
+                            <template v-slot:activator="{ on, attrs }">
+                                <a :href="`https://programacion.importadorasupernova.com/api/reportes/reporteHistorial?id=${$route.params.id}`" target="_blank" style="text-decoration:none"
+                                v-bind="attrs"
+                                v-on="on"
+                                ><v-icon color="error" large>mdi-file-pdf-box</v-icon>
+                                </a>
+                            </template>
+                            <span>Imprimir reporte del historial</span>
+                        </v-tooltip>
+                    </v-card-title>
+                        <v-data-table
+                        :headers="headers"
+                        :items="productosHistorial"
+                        :search="search"
+                        :page.sync="page"
+                        :items-per-page="itemsPerPage"
+                        mobile-breakpoint="0"
                         >
-                        <v-icon>mdi-circle-edit-outline</v-icon>
-                        </v-btn>
-                    </template>
-                    <span>Editar registro</span>
-                </v-tooltip> -->
-                <!-- <v-tooltip bottom>
-                    <template v-slot:activator="{ on, attrs }">
-                        <v-btn
-                        icon
-                        color="error"
-                        v-bind="attrs"
-                        v-on="on"
+                        <template v-slot:[`item.cod`]="{item}">
+                            <v-chip color="amber darken-2" dark><v-icon class="mr-1" color="white">mdi-barcode</v-icon>{{item.codigo}} </v-chip>
+                        </template>
+                        <template v-slot:[`item.producto`]="{item}">
+                            <v-icon color="success">mdi-package-variant</v-icon>{{item.nombre}}  
+                        </template>
+                        <template v-slot:[`item.almacen`]="{item}">
+                            <v-icon color="deep-purple darken-4">mdi-warehouse</v-icon>{{item.nombre_almacen}}  
+                        </template>
+                        <template v-slot:[`item.cant`]="{item}">
+                            <v-chip color="success">{{item.cantidad}} </v-chip>
+                        </template>
+                    </v-data-table>
+                </v-card>
+            </v-col>
+            <v-col cols="6">
+                 <v-card>
+                    <v-card-title>
+                        <v-icon class="mr-2" color="primary" large>mdi-warehouse</v-icon>
+                        {{datosAlmacen.nombre_almacen}} Productos General
+                        <v-spacer></v-spacer>
+                        <v-spacer></v-spacer>
+
+                        <v-tooltip bottom>
+                            <template v-slot:activator="{ on, attrs }">
+                                <a :href="`https://programacion.importadorasupernova.com/api/reportes/reporteHistorial?total=${$route.params.id}`" target="_blank" style="text-decoration:none"
+                                v-bind="attrs"
+                                v-on="on"
+                                ><v-icon color="error" large>mdi-file-pdf-box</v-icon>
+                                </a>
+                            </template>
+                            <span>Imprimir reporte de todos los productos</span>
+                        </v-tooltip>
+                    </v-card-title>
+                        <v-data-table
+                        :headers="headerAlmacen"
+                        :items="productosAlmacen"
+                        :search="search"
+                        :page.sync="page"
+                        :items-per-page="itemsPerPage"
+                        mobile-breakpoint="0"
                         >
-                        <v-icon>mdi-delete</v-icon>
-                        </v-btn>
-                    </template>
-                    <span>Borrar registro</span>
-                    </v-tooltip>
-                 </template> -->
-            </v-data-table>
-        </v-card>
+                        <template v-slot:[`item.cod`]="{item}">
+                            <v-chip color="amber darken-2" dark><v-icon class="mr-1" color="white">mdi-barcode</v-icon>{{item.codigo_producto}} </v-chip>
+                        </template>
+                        <template v-slot:[`item.nombre`]="{item}">
+                            <v-icon color="success">mdi-package-variant</v-icon>{{item.nombre_producto}}  
+                        </template>
+                        <template v-slot:[`item.cant`]="{item}">
+                            <v-chip color="success">{{item.cantidad_producto}} </v-chip>
+                        </template>
+                    </v-data-table>
+                </v-card>
+            </v-col>
+        </v-row>
+
+       
    </v-container>
 </template>
 
@@ -127,31 +161,38 @@ export default {
     data(){
         return{
             productosAlmacen:[],
+            productosHistorial:[],
+            page: 1,
+            pageCount: 0,
+            itemsPerPage: 5,
+
             search: '',
             datosAlmacen:{},
             id_producto:null,
             producto:{},
             headers: [
-            {
-                text: 'Id producto',
-                align: 'center',
-                sortable: false,
-                value: 'id_producto',
-                class: "primary white--text px-0 mx-0",
-            },
-            { text: 'Codigo', value: 'codigo_producto' ,align: 'center', class: "primary white--text px-0 mx-0",},
-            { text: 'Nombre producto', value: 'nombre_producto',align: 'center', class: "primary white--text px-0 mx-0",},
-            { text: 'Cantidad', value: 'cantidad_producto',align: 'center', class: "primary white--text px-0 mx-0", },
+            { text: 'Codigo', value: 'cod' ,align: 'center', class: "primary white--text px-0 mx-0",},
+            { text: 'Nombre producto', value: 'producto',align: 'left', class: "primary white--text px-0 mx-0",},
+            { text: 'Almacen', value: 'almacen',align: 'center', class: "primary white--text px-0 mx-0",},
+            { text: 'Cantidad', value: 'cant',align: 'center', class: "primary white--text px-0 mx-0", },
+            { text: 'Fecha registro', value: 'fecha_created',align: 'center', class: "primary white--text px-0 mx-0",},
             // { text: 'Acciones', value: 'actions', align: 'center',class: "primary white--text px-0 mx-0", },
             ],
             productosCodigo:[],
-            products:[]
+            products:[],
+            headerAlmacen:[
+                { text: 'Codigo', value: 'cod' ,align: 'center', class: "primary white--text px-0 mx-0",},
+                { text: 'Nombre producto', value: 'nombre',align: 'left', class: "primary white--text px-0 mx-0",},
+                { text: 'Cantidad', value: 'cant',align: 'center', class: "primary white--text px-0 mx-0", },
+            ],
+
+            warning:{"status":"warning","icon":"mdi-alert-circle","text":'Debes revisar bien'},
+            success:{"status":"success","icon":"mdi-check-circle","text":'Ejecutado exitosamente'},
+            error:{"status":"error","icon":"mdi-close","text":'Ocurrio un error'},
         }
     },
     mounted(){
-        this.getAllPorductsAlmacen(this.$route.params.id)
-        this.getDataAlmacen(this.$route.params.id)
-        this.getAllProducts();
+        this.generalData();
     },
 
     methods:{
@@ -160,28 +201,72 @@ export default {
 
         ...mapMutations('overlay',['setActiveOverlay','setDesactiveOverlay']),
 
+        ...mapMutations('notification',['setActiveNotification']),
+
+
+        async generalData(){
+            const content = await Promise.all([
+                this.getAllPorductsAlmacen(),this.getDataAlmacen(),this.getAllPorductosHistorial(),this.getAllProducts()
+            ])
+            return content;
+        },
+
         async getAllProducts(){
             try{
-                const response = await axios.get('/api/productos');
+                const response = await axios.get('/api/productos',{
+                    //    headers:
+                    //      {
+                    //         'Bearer': sessionStorage.getItem('token')
+                    //      } 
+                });
                 this.products = response.data;
             }catch(e){
                 console.log(e);
             }
         },
 
-        async getDataAlmacen(id){
+        async getDataAlmacen(){
+            let id = this.$route.params.id;
             try{
-                const response = await axios.get(`/api/?id=${id}`);
+                const response = await axios.get(`/api/?id=${id}`,{
+                    //    headers:
+                    //      {
+                    //         'Bearer': sessionStorage.getItem('token')
+                    //      } 
+                });
                 this.datosAlmacen = response.data;
             }catch(e){
                 console.log(e)
             }
         },
 
-        async getAllPorductsAlmacen(id){
+        async getAllPorductsAlmacen(){
+            let id = this.$route.params.id;
             try{
-                const response = await axios.get(`/api/productosAlmacen?id=${id}`);
+                const response = await axios.get(`/api/productosAlmacen?id=${id}`,{
+                    // headers:
+                    //      {
+                    //         'Bearer': sessionStorage.getItem('token')
+                    //      } 
+                });
                 this.productosAlmacen = response.data
+                console.log(response)
+            }catch(e){
+                console.log(e);
+            }
+        },
+
+         async getAllPorductosHistorial(){
+               let id = this.$route.params.id;
+            try{
+                const response = await axios.get(`/api/historialProductos?id=${id}`,{
+                    // headers:
+                    //      {
+                    //         'Bearer': sessionStorage.getItem('token')
+                    //      } 
+                });
+                this.productosHistorial = response.data
+                console.log(response)
             }catch(e){
                 console.log(e);
             }
@@ -190,7 +275,12 @@ export default {
         async getProductId(producto){
             let codigo = producto.codigo
             try{
-                const response = await axios.get(`/api/productos?codigo=${codigo}`);
+                const response = await axios.get(`/api/productos?codigo=${codigo}`,{
+                    //    headers:
+                    //      {
+                    //         'Bearer': sessionStorage.getItem('token')
+                    //      } 
+                });
                 console.log(response.data)
                 this.productosCodigo = response.data
             }catch(e){
@@ -198,7 +288,7 @@ export default {
             }
         },
 
-        async addProductAlmacen(data){
+        async addProductAlmacen(data,index){
             this.setActiveOverlay()
             let cantidad = parseInt(data.cantidad);
 
@@ -216,16 +306,21 @@ export default {
                         "id_producto":parseInt(data.id),
                         "cantidad":cantidad
                     }
-                    const response = await axios.post('/api/productosAlmacen',datos);
-                    console.log(response.data);
+                    const response = await axios.post('/api/productosAlmacen',datos,{
+                        // headers:
+                        //     {
+                        //         'Bearer': sessionStorage.getItem('token')
+                        //     } 
+                    });
                     this.getAllPorductsAlmacen(this.$route.params.id)
+                    this.getAllPorductosHistorial(this.$route.params.id)
                     if(response.status == 200){
+                        this.productosCodigo.splice(index,1);
                         this.setDesactiveOverlay()
-                        let data = {"status":"success","icon":"mdi-check","title":"Agregado","text":'Producto agregado exitosamente',"textButton":"Cerrar" }
-                        this.setActiveModal(data)
-                        setTimeout(()=>{
-                            this.setDesactiveModal()
-                        },2500);
+                        // let data = {"status":"success","icon":"mdi-check","title":"Agregado","text":'Producto agregado exitosamente',"textButton":"Cerrar" }
+                        // this.setActiveModal(data)
+                        this.success.text = 'Producto agregado exitosamente'
+                        this.setActiveNotification(this.success)
                     }
                 }catch(e){
                     console.log(e);
@@ -233,7 +328,17 @@ export default {
                 
 
             }
-        }
+        },
+
+        // async printReportProducts(){
+        //     console.log('entrando')
+        //     try{
+        //         const response = await axios.get(`/api/reportes/reporteHistorial?total=${this.$route.params.id}`);
+        //         console.log(response)
+        //     }catch(e){
+        //         console.log(e);
+        //     }
+        // }
     }
 }
 </script>

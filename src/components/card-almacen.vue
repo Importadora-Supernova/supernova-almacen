@@ -19,7 +19,7 @@
 
       <v-card-actions>
         <v-btn outlined rounded text color="primary" @click="$emit('view',data)"> Ver <v-icon class="ml-1">mdi-eye</v-icon> </v-btn>
-        <v-btn outlined rounded text color="error" @click="deleteAlmacen(data)"> Eliminar <v-icon class="ml-1">mdi-delete</v-icon></v-btn>
+        <v-btn outlined rounded text color="error" disabled  @click="deleteAlmacen(data)"> Eliminar <v-icon class="ml-1">mdi-delete</v-icon></v-btn>
       </v-card-actions>
     </v-card>
   </v-col>
