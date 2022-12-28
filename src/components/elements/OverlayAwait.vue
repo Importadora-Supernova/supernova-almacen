@@ -3,7 +3,7 @@
        <v-overlay :value="estado" class="text-center" :absolute="true">
           <div class="container-gif">
             <img src="../../assets/supernova.gif" width="130" alt="" v-if="estado">
-            <p class="white--text">Cragando por favor espere...</p>
+            <p class="white--text">Cargando por favor espere...</p>
           </div>
           
        </v-overlay>

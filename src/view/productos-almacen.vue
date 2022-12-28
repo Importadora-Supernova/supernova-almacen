@@ -1,47 +1,6 @@
 <template>
    <v-container class="px-5 py-3">
       <v-row>
-
-
-         <v-dialog v-model="modalModificar" max-width="450">
-            <v-card>
-               <v-card-title class="warning">
-                     <v-col cols="12" class="white--text">Modificar Producto</v-col>
-               </v-card-title>
-               <v-card-text>
-                  <v-row class="mt-4">
-                     <v-col cols="12" class="d-flex justify-space-around">
-                        <v-card outlined class="text-center px-2 py-1" style="width:120px">
-                           <v-icon large color="primary">mdi-warehouse</v-icon>
-                           <h2>Almacen:</h2>
-                           <h5>{{nombreAlmacen}} </h5>
-                        </v-card>
-                         <v-card outlined class="text-center px-2 py-1" style="width:120px">
-                           <v-icon large color="primary">mdi-barcode</v-icon>
-                           <h2>Codigo:</h2>
-                           <h5>{{codigoProducto}} </h5>
-                        </v-card>
-                         <v-card outlined class="text-center px-2 py-1" style="width:120px">
-                           <v-icon large color="primary">mdi-package-variant</v-icon>
-                           <h2>Producto :</h2>
-                           <h5>{{nombreProducto}}</h5>
-                        </v-card>
-                     </v-col>
-                     <v-col cols="12" class="d-flex">
-                        <v-text-field label="Cantidad" v-model="cantidadModificar" type="number"></v-text-field>
-                        <v-btn class="mt-3 success">+</v-btn>
-                        <v-btn class="mt-3 ml-1 error">-</v-btn>
-                     </v-col>
-                  </v-row>
-               </v-card-text>
-               <v-card-actions>
-                  <v-col cols="12" class="text-right">
-                     <v-btn text color="error" @click="closeModalModificar">Cancelar</v-btn>
-                  </v-col>
-               </v-card-actions>
-            </v-card>
-         </v-dialog>
-
         <v-col cols="12">
             <v-card elevation="3"  class="px-4 py-2 mt-3"> 
                   <v-row class="pt-5">
@@ -53,6 +12,7 @@
                                 label="Filtrar producto por Codigo o Nombre"
                                 return-object
                                 v-model="producto"
+                                :disabled="!permisos.productos_almacenes"
                                 @change="getProductId(producto)"
                                 ></v-autocomplete>
                      </v-col>
@@ -126,6 +86,12 @@
                         <v-spacer></v-spacer>
                         </v-toolbar>
                      </template>
+                     <template v-slot:[`item.almacen`]="{item}">
+                        <span><v-icon color="indigo">mdi-warehouse</v-icon> {{item.nombre_almacen}} </span>
+                     </template>
+                     <template v-slot:[`item.cod`]="{item}">
+                        <v-chip color="warning"><v-icon color="white">mdi-barcode</v-icon> {{item.codigo}} </v-chip>
+                     </template>
                      <!-- <template v-slot:[`item.actions`]="{item}">
                         <v-tooltip bottom>
                         <template v-slot:activator="{ on, attrs }">
@@ -159,15 +125,11 @@ export default {
       return{
          productoAlmacenes:[],
          products:[],
+         permisos:[],
          producto:{},
          almacenes:[],
          almacen:'',
 
-         modalModificar:false,
-         cantidadModificar:0,
-         nombreAlmacen:'',
-         nombreProducto:'',
-         codigoProducto:'',
 
          registerNew:false,
          total_productos:0,
@@ -181,8 +143,8 @@ export default {
                 },
                  {
                 text: "Nombre de Almacen",
-                value: "nombre_almacen",
-                align: "center",
+                value: "almacen",
+                align: "left",
                 class: "primary white--text px-0 mx-0",
                 },
                  {
@@ -193,7 +155,7 @@ export default {
                 },
                  {
                     text: "Codigo",
-                    value: "codigo",
+                    value: "cod",
                     align: "center",
                     class: "primary white--text px-0 mx-0",
                 },
@@ -216,6 +178,7 @@ export default {
    mounted(){
       this.getAllProducts();
       this.getAllAlmacenes();
+      this.getPermisos();
    },
 
    methods:{
@@ -223,6 +186,18 @@ export default {
       ...mapMutations('modalAlert',['setActiveModal','setDesactiveModal']),
 
       ...mapMutations('overlay',['setActiveOverlay','setDesactiveOverlay']),
+
+      async  getPermisos(){
+            let ID = sessionStorage.getItem('id');
+            let id = parseInt(ID);
+            try{
+               const res = await axios.get(`/api/admin/permisos?id=${id}`);
+               this.permisos = res.data;
+            }catch(e){
+               console.log(e)
+            }
+           
+        },
 
       async getAllProducts(){
             try{

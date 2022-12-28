@@ -26,12 +26,12 @@ export default {
 <style lang="scss">
     #notification{
         border-radius: 8px;
-        width: 300px;
-        position: absolute;
+        width: auto;
+        position: fixed;
         z-index: 999 !important;
         right: -5px;
         top: 10px;
-        padding: 5px;
+        padding: 10px;
         display: flex;
     }
 

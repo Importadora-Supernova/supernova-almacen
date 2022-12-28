@@ -37,7 +37,7 @@
                                                  <th class="text-left">
                                                    Cantidad
                                                 </th>
-                                                <th class="text-left">
+                                                <th class="text-center">
                                                     Acciones
                                                 </th>
                                             </tr>
@@ -52,8 +52,10 @@
                                                 <td>
                                                     <v-text-field type="number" v-model="productosCodigo[index].cantidad" placeholder="0"></v-text-field>
                                                 </td>
-                                                <td>
+                                                <td class="text-center">
                                                     <v-btn class="primary" @click="addProductAlmacen(item,index)">Agregar <v-icon class="ml-1">mdi-plus-circle</v-icon> </v-btn>
+                                                    <v-chip class="success ml-2"  label v-if="item.inventario === '0'"><v-icon color="white">mdi-check</v-icon> Inventariado</v-chip>
+                                                    <v-chip class="error ml-2" label v-else><v-icon color="white">mdi-close</v-icon> No Inventariado</v-chip>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -68,7 +70,7 @@
         </v-row>
 
         <v-row>
-            <v-col cols="6">
+            <v-col cols="12" md="6" lg="6">
                 <v-card>
                     <v-card-title>
                         <v-icon class="mr-2" color="primary" large>mdi-warehouse</v-icon>
@@ -109,7 +111,7 @@
                     </v-data-table>
                 </v-card>
             </v-col>
-            <v-col cols="6">
+            <v-col cols="12" md="6" lg="6">
                  <v-card>
                     <v-card-title>
                         <v-icon class="mr-2" color="primary" large>mdi-warehouse</v-icon>
@@ -304,7 +306,8 @@ export default {
                     let datos = {
                         "id_almacen":parseInt(this.$route.params.id), 
                         "id_producto":parseInt(data.id),
-                        "cantidad":cantidad
+                        "cantidad":cantidad,
+                        "inventario":data.inventario
                     }
                     const response = await axios.post('/api/productosAlmacen',datos,{
                         // headers:
@@ -317,8 +320,6 @@ export default {
                     if(response.status == 200){
                         this.productosCodigo.splice(index,1);
                         this.setDesactiveOverlay()
-                        // let data = {"status":"success","icon":"mdi-check","title":"Agregado","text":'Producto agregado exitosamente',"textButton":"Cerrar" }
-                        // this.setActiveModal(data)
                         this.success.text = 'Producto agregado exitosamente'
                         this.setActiveNotification(this.success)
                     }

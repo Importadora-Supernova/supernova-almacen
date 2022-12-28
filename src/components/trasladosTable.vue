@@ -1,7 +1,7 @@
 <template>
     <v-data-table
     :headers="cabecera"
-    :items="Traslados"
+    :items="traslados"
     class="elevation-6 py-7"
   >
     <template v-slot:top>
@@ -12,6 +12,17 @@
         <v-divider class="mx-4" inset vertical></v-divider>
         <v-spacer></v-spacer>
         <v-spacer></v-spacer>
+        <v-spacer></v-spacer>
+        <v-spacer></v-spacer>
+         <v-autocomplete
+          :items="products"
+          item-text="fullname"
+          item-value="id"
+          label="Filtrar producto por Codigo o Nombre"
+           return-object
+          v-model="producto"
+          @change="getProductId(producto)"
+           ></v-autocomplete>
       </v-toolbar>
     </template>
     <template v-slot:[`item.almacen_o`]="{ item }">
@@ -49,10 +60,13 @@
 </template>
 
 <script>
-import {mapActions, mapState} from 'vuex'
+import axios from 'axios'
 export default {
     data(){
         return{
+          products:[],
+          traslados:[],
+          producto:{},
             cabecera:[
                  {
                 text: "ID",
@@ -107,14 +121,52 @@ export default {
     },
     mounted(){
         this.getDataTraslados();
+        this.getAllProducts();
     },
 
     computed:{
-        ...mapState('traslados',['Traslados'])
+        
     },
 
     methods:{
-        ...mapActions('traslados',['getDataTraslados'])
+        
+
+         async getAllProducts(){
+            try{
+                const response = await axios.get('/api/productos?total=total',{
+
+                });
+                this.products = response.data;
+            }catch(e){
+                console.log(e);
+            }
+      },
+
+        async getDataTraslados(){
+
+            try {
+                const response = await axios.get('api/traslados', {
+                });
+
+                if (response.status == 200) {
+                    this.traslados =  response.data
+                }
+
+            } catch (e) {
+                console.log(e)
+            }
+        },
+
+        async getProductId(item){
+            try
+            {
+                const response = await axios.get(`/api/traslados?producto=${item.id}`);
+                this.traslados = response.data
+            }catch(e)
+            {
+                console.log(e);
+            }
+        }
     }
 }
 </script>

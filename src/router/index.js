@@ -95,6 +95,15 @@ const router = new Router({
             component: () =>
                 import ('../view/almacen-garantia-tienda.vue'),
         },
+        {
+            path:'/pedidos/almacen',
+            name:'pedidosAlmacen',
+            meta:{
+                layout:'dashboard-layout',
+                auth:true
+            },
+            component:()=> import ('../view/pedidos/almacen-pedidos.vue'),
+        }
 
     ]
 

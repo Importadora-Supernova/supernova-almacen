@@ -63,8 +63,9 @@
                 label="Numero de Orden"
                 v-model="orden"
                 @keyup.enter="getAllProductsOrden"
+                 :disabled="!permisos.almacen_garantia"
               ></v-text-field>
-              <v-btn class="mt-3 ml-1 primary" @click="getAllProductsOrden">
+              <v-btn class="mt-3 ml-1 primary" @click="getAllProductsOrden" :disabled="!permisos.almacen_garantia">
                 Buscar 
                 <v-icon class="ml-2">mdi-clipboard-text-search</v-icon>
               </v-btn>
@@ -149,6 +150,7 @@ export default {
     return {
        orden:'',
        productosOrdenes:[],
+       permisos:[],
        modalTransfer:false,
        titleModal:'',
        cantidadTransferir:0,
@@ -164,12 +166,27 @@ export default {
     };
   },
 
+  mounted(){
+    this.getPermisos()
+  },
+
   methods:{
 
        ...mapMutations('modalAlert',['setActiveModal','setDesactiveModal']),
 
       ...mapMutations('overlay',['setActiveOverlay','setDesactiveOverlay']),
 
+      async  getPermisos(){
+            let ID = sessionStorage.getItem('id');
+            let id = parseInt(ID);
+            try{
+               const res = await axios.get(`/api/admin/permisos?id=${id}`);
+               this.permisos = res.data;
+            }catch(e){
+               console.log(e)
+            }
+           
+      }, 
 
    // buscar todos los productos relacionados a una orden
     async getAllProductsOrden(){

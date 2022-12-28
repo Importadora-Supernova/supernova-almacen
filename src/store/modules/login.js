@@ -64,6 +64,7 @@ export default {
                             sessionStorage.setItem('autenticado', true)
                             sessionStorage.setItem('token', token)
                             sessionStorage.setItem('user', response.data.user);
+                            sessionStorage.setItem('id', response.data.id);
                             // sessionStorage.setItem('refresh_token', response.data.refresh_token)
                             // sessionStorage.setItem('expires', response.data.expires)
 

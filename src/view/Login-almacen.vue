@@ -11,7 +11,7 @@
                         <img src="@/assets/icon-supernova.png" width="80">
                         <h2>Almacen</h2>
                         <v-text-field label="Usuario"    type="text"  v-model="dataLogin.username" append-icon="mdi-account"></v-text-field>
-                         <v-text-field label="Contraseña" type="password" v-model="dataLogin.password"  append-icon="mdi-lock"></v-text-field>
+                         <v-text-field label="Contraseña" type="password" v-model="dataLogin.password"  append-icon="mdi-lock" @keypress.enter="LoginSession()"></v-text-field>
                          <v-btn class="primary" @click="LoginSession()">Entrar</v-btn> 
                          <p class="mt-2">--- O ---</p>
                          <v-btn text color="info">Olvidaste tu contraseña</v-btn>

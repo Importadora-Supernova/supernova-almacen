@@ -27,9 +27,9 @@ export default {
             try {
 
                 const response = await axios.get('api/traslados', {
-                    headers: {
-                        'Bearer': sessionStorage.getItem('token')
-                    }
+                    // headers: {
+                    //     'Bearer': sessionStorage.getItem('token')
+                    // }
                 });
 
                 if (response.status == 200) {

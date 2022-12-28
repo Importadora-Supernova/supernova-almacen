@@ -12,6 +12,7 @@
                                 label="Filtrar producto por Codigo o Nombre"
                                 return-object
                                 v-model="producto"
+                                :disabled="!permisos.almacen_general"
                                 @change="getProductCodigo(producto)"
                                 ></v-autocomplete>
                      </v-col>
@@ -30,22 +31,21 @@
                         <v-spacer></v-spacer>
                         </v-toolbar>
                      </template>
-                     <!-- <template v-slot:[`item.actions`]="{ item }">
-                        <v-tooltip bottom>
-                        <template v-slot:activator="{ on, attrs }">
-                           <v-btn
-                              icon
-                              color="primary"
-                              v-bind="attrs"
-                              v-on="on"
-                              @click="viewReport(item)"
-                           >
-                              <v-icon>mdi-account</v-icon>
-                           </v-btn>
-                        </template>
-                        <span>más informacion</span>
-                        </v-tooltip>
-                     </template> -->
+                     <template v-slot:[`item.actions`]="{item}">
+                        <v-row>
+                           <v-col cols="12" class="text-center" v-if="permisos.almacen_general">
+                              <v-switch
+                                 inset
+                                 v-model="item.estatus"
+                                 @change="changeEstatus(item)"
+                              ></v-switch>
+                           </v-col>
+                           <v-col cols="12" class="text-center d-flex justify-center" v-else>
+                                 <p> {{item.estatus}}</p>
+                           </v-col>
+                        </v-row>
+                        
+                     </template> 
                   </v-data-table>
             </v-card>
         </v-col>
@@ -62,6 +62,10 @@ export default {
          productoAlmacenes:[],
          products:[],
          productsCodigo:[],
+         switch:false,
+         permisos:{},
+         success:{"status":"success","icon":"mdi-check-circle","text":'Ejecutado exitosamente'},
+         error:{"status":"error","icon":"mdi-close","text":'Ocurrio un error'},
          producto:{},
            cabecera:[
                  {
@@ -88,12 +92,12 @@ export default {
                     align: "center",
                     class: "primary white--text px-0 mx-0",
                 },
-               //  {
-               //      text: "Acciones",
-               //      value: "actions",
-               //      align: "center",
-               //      class: "primary white--text px-0 mx-0",
-               //  },
+                {
+                    text: "Estatus",
+                    value: "actions",
+                    align: "left",
+                    class: "primary white--text px-0 mx-0",
+                },
             ]
       }
    },
@@ -101,6 +105,7 @@ export default {
    mounted(){
       this.getAllProducts();
       this.getAllProductsCodigo();
+      this.getPermisos()
    },
 
    methods:{
@@ -108,6 +113,8 @@ export default {
          ...mapMutations('modalAlert',['setActiveModal','setDesactiveModal']),
 
          ...mapMutations('overlay',['setActiveOverlay','setDesactiveOverlay']),
+
+         ...mapMutations('notification',['setActiveNotification']),
 
          async getAllProducts(){
                try{
@@ -150,6 +157,37 @@ export default {
                   console.log(e);
                }
          },
+
+         async changeEstatus(item){
+             try{
+               
+               let data = {"id_producto":item.id,"estatus":item.estatus === true ? "1" : "0"}
+               const response = await axios.post(`/api/productos`,data);
+
+               if(response.status === 200){
+                  this.getAllProducts()
+                  this.success.text = response.data.mensaje
+                  this.setActiveNotification(this.success)
+               }
+
+             }catch(e){
+               console.log(e)
+               this.error.text = e
+               this.setActiveNotification(this.error)
+             }
+         },
+
+        async  getPermisos(){
+            let ID = sessionStorage.getItem('id');
+            let id = parseInt(ID);
+            try{
+               const res = await axios.get(`/api/admin/permisos?id=${id}`);
+               this.permisos = res.data;
+            }catch(e){
+               console.log(e)
+            }
+           
+         }
 
          
       

@@ -59,12 +59,13 @@
         <v-row>
             <v-col cols="12" class="d-flex justify-space-between">
                  <h2>Almacenes</h2>
-                 <v-btn class="primary" @click="modal_almacen = true">+ Add new almacen</v-btn>
+                 <v-btn class="primary" @click="modal_almacen = true"  :disabled="!permisos.almacenes">+ Add new almacen</v-btn>
             </v-col>
            
             <card-almacen 
             v-for="item of almacenes" :key="item.id"
             :data="item"
+            :permiso="permisos.almacenes"
             @delete="confirmEliminarAlmacen"
             @view="viewInformation"
             ></card-almacen>
@@ -88,6 +89,7 @@ export default {
             id_status:null,
             id_delete:null,
             almacen_delete:'',
+            permisos:[],
             almacen:{
                 nombre_almacen:"",
                 tipo:"",
@@ -107,6 +109,7 @@ export default {
         this.setActiveOverlay();
         this.getAllAlmacenes();
         this.getAllStatus();
+        this.getPermisos();
     },
 
     computed:{
@@ -129,6 +132,18 @@ export default {
         ...mapMutations('overlay',['setActiveOverlay','setDesactiveOverlay']),
 
         ...mapMutations('modalAlert',['setActiveModal']),
+
+       async  getPermisos(){
+            let ID = sessionStorage.getItem('id');
+            let id = parseInt(ID);
+            try{
+               const res = await axios.get(`/api/admin/permisos?id=${id}`);
+               this.permisos = res.data;
+            }catch(e){
+               console.log(e)
+            }
+           
+        },
 
         async getAllAlmacenes(){
             try{

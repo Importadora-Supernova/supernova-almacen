@@ -7,7 +7,7 @@
                     <h3 class="white--text">Traspaso de productos entre almacenes</h3>
                 </v-card-title>
                 <v-card-text>
-                    <v-row class="mt-2">
+                    <v-row class="mt-2" v-if="permisos.traslados">
                            <v-col cols="12" sm="4" md="4">
                                 <v-autocomplete
                                 label="Almacen de Origen"
@@ -44,7 +44,7 @@
                     </v-row>
                     <v-row>
                         <v-col cols="12">
-                              <v-card outlined v-if="transfer">
+                            <v-card outlined v-if="transfer">
                                     <v-simple-table >
                                         <template v-slot:default>
                                         <thead>
@@ -55,14 +55,14 @@
                                                 <th class="text-center">
                                                     Nombre Producto
                                                 </th>
-                                                 <th class="text-center">
+                                                <th class="text-center">
                                                     Codigo Producto
                                                 </th>
-                                                 <th class="text-center">
+                                                <th class="text-center">
                                                     Cantidad Disponible
                                                 </th>
-                                                 <th class="text-center">
-                                                   Cantidad a transferir
+                                                <th class="text-center">
+                                                    Cantidad a transferir
                                                 </th>
                                                 <th class="text-center">
                                                     Transferir
@@ -75,9 +75,9 @@
                                                 <td class="text-center">{{ producto.nombre_almacen}}</td>
                                                 <td class="text-center">{{ producto.nombre_producto  }}</td>
                                                 <td class="text-center">{{ producto.codigo_producto }}</td>
-                                                <td class="text-center">{{ producto.cantidad_producto }}</td>
+                                                <td class="text-center"><v-chip label :class="{'success':producto.cantidad_producto > 0,'error':producto.cantidad_producto <= 0} " >{{ producto.cantidad_producto }}</v-chip>-<v-chip label class="primary">Pz por caja{{ producto.topec }} </v-chip>  </td>
                                                 <td class="text-center">
-                                                    <v-text-field type="number" v-model="producto.cantidad"></v-text-field>
+                                                    <v-text-field type="number" placeholder="0" v-model="producto.cantidad"></v-text-field>
                                                 </td>
                                                 <td class="text-center">
                                                     <v-btn class="primary" @click="verificarTransfer(producto)" >Trasladar <v-icon class="ml-1">mdi-compare-horizontal</v-icon> </v-btn>
@@ -95,9 +95,7 @@
        </v-row>
         <v-row>
             <v-col cols="12">
-
-                <table-data-traslados></table-data-traslados>
-
+                    <traslados-table></traslados-table>    
             </v-col>
         </v-row>
    </v-container>
@@ -106,13 +104,14 @@
 <script>
 import axios from 'axios';
 import {mapMutations,mapActions} from 'vuex';
-import tableDataTraslados from '@/components/tableDataTraslados.vue'
+import TrasladosTable from '@/components/trasladosTable.vue';
 export default {
-    components:{tableDataTraslados},
+    components:{TrasladosTable},
     data(){
         return{
             almacenes:[],
             products:[],
+            permisos:[],
             producto:{},
             productosCodigo:[],
             almacen_origen:'',
@@ -139,6 +138,7 @@ export default {
     },
     mounted(){
         this.getAllAlmacenes();
+        this.getPermisos()
     },
 
     methods:{
@@ -149,14 +149,22 @@ export default {
 
          ...mapActions('traslados',['getDataTraslados']),
 
+         async  getPermisos(){
+            
+            let ID = sessionStorage.getItem('id');
+            let id = parseInt(ID);
+            try{
+               const res = await axios.get(`/api/admin/permisos?id=${id}`);
+               this.permisos = res.data;
+            }catch(e){
+               console.log(e)
+            }
+           
+         }, 
+
          async getAllAlmacenes(){
             try{
-                const response = await axios.get('/api/',{
-                    //  headers:
-                    //     {
-                    //         'Bearer': sessionStorage.getItem('token')
-                    //     } 
-                })
+                const response = await axios.get('/api/')
                 this.almacenes = response.data
 
                this.origenes =  [...this.almacenes];
@@ -173,10 +181,6 @@ export default {
             this.destinos = [...filtro];
             try{
                 const response = await axios.get(`/api/productosAlmacen?id=${id}`,{
-                    //  headers:
-                    //     {
-                    //         'Bearer': sessionStorage.getItem('token')
-                    //     } 
                 });
                 this.products = response.data
                 console.log(response.data)
@@ -187,6 +191,7 @@ export default {
         },
 
         async searchproductsCodigo(producto){
+            this.producto.cantidad = null
             console.log(producto)
             if(this.almacen_origen === '' || this.almacen_destino === ''){
                 let data = {"status":"warning","icon":"mdi-warehouse","title":"Alerta","text":'Debes agregar los almacenes de origen y destino',"textButton":"Cerrar" }
@@ -244,10 +249,6 @@ export default {
         async transferProducto(data){
             try{
                 const response = await axios.post(`/api/traslados`,data,{
-                    //  headers:
-                    //     {
-                    //         'Bearer': sessionStorage.getItem('token')
-                    //     } 
                 });
                 if(response.status == 200){
                     let data = {"status":"success","icon":"mdi-compare-horizontal","title":"Exitoso","text":response.data.mensaje,"textButton":"Cerrar" }
@@ -255,6 +256,7 @@ export default {
                     setTimeout(()=>{
                         this.setDesactiveModal()
                     },3000);
+                    this.verificarAlmacenOrigen(this.almacen_origen)
                     this.getDataTraslados()
                     this.transfer = false
                     this.producto = {}
