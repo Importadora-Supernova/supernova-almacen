@@ -95,7 +95,7 @@
        </v-row>
         <v-row>
             <v-col cols="12">
-                    <traslados-table></traslados-table>    
+                    <traslados-table :datos="traslados"></traslados-table>    
             </v-col>
         </v-row>
    </v-container>
@@ -120,6 +120,8 @@ export default {
             destinos:[],
             origenes:[],
             transfer:false,
+
+            traslados:[],
         }
     },
       computed:{
@@ -139,6 +141,7 @@ export default {
     mounted(){
         this.getAllAlmacenes();
         this.getPermisos()
+        this.getDataTraslados()
     },
 
     methods:{
@@ -175,6 +178,19 @@ export default {
             }
         },
 
+        async getDataTraslados(){
+        try {
+            const response = await axios.get('api/traslados', {
+            });
+
+            if (response.status == 200) {
+                this.traslados =  response.data
+            }
+
+        } catch (e) {
+            console.log(e)
+        }
+        },
 
         async verificarAlmacenOrigen(id){
             const filtro = this.almacenes.filter(item => item.id != id);

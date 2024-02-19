@@ -1,7 +1,7 @@
 <template>
     <v-data-table
     :headers="cabecera"
-    :items="traslados"
+    :items="datos"
     class="elevation-6 py-7"
   >
     <template v-slot:top>
@@ -13,13 +13,12 @@
         <v-spacer></v-spacer>
         <v-spacer></v-spacer>
         <v-spacer></v-spacer>
-        <v-spacer></v-spacer>
          <v-autocomplete
           :items="products"
           item-text="fullname"
           item-value="id"
           label="Filtrar producto por Codigo o Nombre"
-           return-object
+          return-object
           v-model="producto"
           @change="getProductId(producto)"
            ></v-autocomplete>
@@ -62,13 +61,13 @@
 <script>
 import axios from 'axios'
 export default {
+  props:['datos'],
     data(){
         return{
           products:[],
-          traslados:[],
           producto:{},
             cabecera:[
-                 {
+                {
                 text: "ID",
                 value: "id",
                 align: "center",
@@ -120,7 +119,6 @@ export default {
         }
     },
     mounted(){
-        this.getDataTraslados();
         this.getAllProducts();
     },
 
@@ -130,10 +128,9 @@ export default {
 
     methods:{
         
-
-         async getAllProducts(){
+      async getAllProducts(){
             try{
-                const response = await axios.get('/api/productos?total=total',{
+                const response = await axios.get('/api/productos/?total=total',{
 
                 });
                 this.products = response.data;
@@ -142,20 +139,6 @@ export default {
             }
       },
 
-        async getDataTraslados(){
-
-            try {
-                const response = await axios.get('api/traslados', {
-                });
-
-                if (response.status == 200) {
-                    this.traslados =  response.data
-                }
-
-            } catch (e) {
-                console.log(e)
-            }
-        },
 
         async getProductId(item){
             try

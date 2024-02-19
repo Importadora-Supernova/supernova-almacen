@@ -215,7 +215,7 @@ export default {
 
         async getAllProducts(){
             try{
-                const response = await axios.get('/api/productos',{
+                const response = await axios.get('/api/productos/',{
                     //    headers:
                     //      {
                     //         'Bearer': sessionStorage.getItem('token')
@@ -277,7 +277,7 @@ export default {
         async getProductId(producto){
             let codigo = producto.codigo
             try{
-                const response = await axios.get(`/api/productos?codigo=${codigo}`,{
+                const response = await axios.get(`/api/productos/?codigo=${codigo}`,{
                     //    headers:
                     //      {
                     //         'Bearer': sessionStorage.getItem('token')

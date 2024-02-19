@@ -92,22 +92,22 @@
                      <template v-slot:[`item.cod`]="{item}">
                         <v-chip color="warning"><v-icon color="white">mdi-barcode</v-icon> {{item.codigo}} </v-chip>
                      </template>
-                     <!-- <template v-slot:[`item.actions`]="{item}">
+                     <template v-slot:[`item.actions`]="{item}">
                         <v-tooltip bottom>
                         <template v-slot:activator="{ on, attrs }">
                            <v-btn
                               icon
-                              color="warning"
+                              color="indigo"
                               v-bind="attrs"
                               v-on="on"
                               @click="modifiCantidad(item)"
                            >
-                              <v-icon>mdi-pencil</v-icon>
+                              <v-icon>mdi-swap-horizontal-bold</v-icon>
                            </v-btn>
                         </template>
-                        <span>editar cantidad</span>
+                        <span>Trasladar Productos</span>
                         </v-tooltip>
-                     </template> -->
+                     </template>
                   </v-data-table>
                   <v-chip label class="success">total productos:{{total_productos}}</v-chip>
                   
@@ -165,12 +165,12 @@ export default {
                     align: "center",
                     class: "primary white--text px-0 mx-0",
                 },
-                    // {
-                    //     text: "Acciones",
-                    //     value: "actions",
-                    //     align: "center",
-                    //     class: "primary white--text px-0 mx-0",
-                    // },
+                    {
+                        text: "Acciones",
+                        value: "actions",
+                        align: "center",
+                        class: "primary white--text px-0 mx-0",
+                    },
             ]
       }
    },
@@ -201,7 +201,7 @@ export default {
 
       async getAllProducts(){
             try{
-                const response = await axios.get('/api/productos?total=total',{
+                const response = await axios.get('/api/productos/?total=total',{
                     // headers:
                     //     {
                     //         'Bearer': sessionStorage.getItem('token')
