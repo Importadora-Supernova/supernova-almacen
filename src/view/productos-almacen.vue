@@ -1,5 +1,11 @@
 <template>
    <v-container class="px-5 py-3">
+      <modalTrasladarProductos 
+      :modal="modal_trasladar"
+      :Almacenes="destinos"
+      :dataTraslado="traslado" 
+      @close="closeModalTrasladar"
+      ></modalTrasladarProductos>
       <v-row>
         <v-col cols="12">
             <v-card elevation="3"  class="px-4 py-2 mt-3"> 
@@ -17,6 +23,7 @@
                                 ></v-autocomplete>
                      </v-col>
                   </v-row>
+
                   <v-row v-if="registerNew">
                      <v-col cols="12">
                         <v-alert type="info">
@@ -72,6 +79,7 @@
                                 </v-card>
                             </v-col>
                   </v-row>
+
                   <v-data-table
                      :headers="cabecera"
                      :items="productoAlmacenes"
@@ -100,12 +108,20 @@
                               color="indigo"
                               v-bind="attrs"
                               v-on="on"
-                              @click="modifiCantidad(item)"
+                              @click="trasladarProductos(item)"
                            >
                               <v-icon>mdi-swap-horizontal-bold</v-icon>
                            </v-btn>
+                           <v-btn
+                              icon
+                              color="success"
+                              v-bind="attrs"
+                              v-on="on"
+                           >
+                              <v-icon>mdi-tag-plus</v-icon>
+                           </v-btn>
                         </template>
-                        <span>Trasladar Productos</span>
+                        <span>Agregar Productos</span>
                         </v-tooltip>
                      </template>
                   </v-data-table>
@@ -120,7 +136,13 @@
 <script>
 import {mapMutations} from 'vuex'
 import axios from 'axios'
+
+import modalTrasladarProductos from '@/components/modalTrasladarProductos.vue'
+
 export default {
+    components:{
+        modalTrasladarProductos
+    },
    data(){
       return{
          productoAlmacenes:[],
@@ -134,7 +156,7 @@ export default {
          registerNew:false,
          total_productos:0,
          cantidad:0,
-           cabecera:[
+        cabecera:[
                  {
                 text: "ID del almacen",
                 value: "id_almacen",
@@ -171,7 +193,10 @@ export default {
                         align: "center",
                         class: "primary white--text px-0 mx-0",
                     },
-            ]
+        ],
+        modal_trasladar:false,
+        traslado:{},
+        destinos:[]
       }
    },
 
@@ -215,12 +240,7 @@ export default {
 
        async getAllAlmacenes(){
             try{
-                const response = await axios.get('/api/',{
-                    // headers:
-                    //     {
-                    //         'Bearer': sessionStorage.getItem('token')
-                    //     } 
-                })
+                const response = await axios.get('/api/')
                 this.almacenes = response.data
             }catch(e){
                 console.log(e)
@@ -325,6 +345,21 @@ export default {
 
         closeModalModificar(){
           this.modalModificar = false
+        },
+
+        trasladarProductos(item){
+            this.traslado = Object.assign({}, item)
+            this.verificarAlmacenOrigen(item.id_almacen)
+            this.modal_trasladar = true
+        },
+        
+        verificarAlmacenOrigen(id){
+            const filtro = this.almacenes.filter(item => item.id != id);
+            this.destinos = [...filtro];
+        },
+
+        closeModalTrasladar(){
+            this.modal_trasladar = false
         }
    }
 }

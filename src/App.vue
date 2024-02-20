@@ -48,5 +48,11 @@ export default {
     }
   }
 
+  @media (min-width: 960px){
+    .container {
+        max-width: 100% !important;
+    }
+  }
+
 
 </style>
