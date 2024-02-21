@@ -103,6 +103,15 @@ const router = new Router({
                 auth:true
             },
             component:()=> import ('../view/pedidos/almacen-pedidos.vue'),
+        },
+        {
+            path:'/alertProducts',
+            name:'alertaProductos',
+            meta:{
+                layout:'dashboard-layout',
+                auth:true
+            },
+            component:()=> import ('../view/alert-products.vue'),
         }
 
     ]

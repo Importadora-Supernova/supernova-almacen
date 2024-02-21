@@ -39,6 +39,11 @@
                         </v-list-item-icon>
                         <v-list-item-title ><v-icon class="mr-5">mdi-transfer</v-icon>Traspasos</v-list-item-title>
                     </v-list-item>
+                    <v-list-item to="/alertProducts" color="white" >
+                        <v-list-item-icon>
+                        </v-list-item-icon>
+                        <v-list-item-title ><v-icon class="mr-5">mdi-alert-outline</v-icon>Alertas Productos</v-list-item-title>
+                    </v-list-item>
                     <v-list-group color="white" >
                         <template v-slot:activator>
                             <v-list-item-icon class="pl-10">  

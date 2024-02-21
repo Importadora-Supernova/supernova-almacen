@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="$props.modal" max-width="700">
+    <v-dialog v-model="$props.modal" max-width="600">
         <v-card class="card-alert">
                <v-btn
                 class="mx-2 btn-close"
@@ -13,42 +13,32 @@
                 </v-icon>
             </v-btn>
             <v-card-title>
-                <h3 class="primary--text">Traslasdar Productos</h3>
+                <h3 class="primary--text">Agregar Productos</h3>
             </v-card-title>
             <v-card-text>
                 <v-row>
                     <v-col cols="12" >
-                        <p><v-icon color="indigo">mdi-warehouse</v-icon> <b>Almacen Origen:  {{ dataTraslado.nombre_almacen }} </b></p> 
+                        <p><v-icon color="indigo">mdi-warehouse</v-icon> <b>Almacen:  {{ dataTraslado.nombre_almacen }} </b></p> 
                     </v-col>
                     <v-col cols="6" >
                         <p><b>DATOS DEL PRODUCTO:</b></p> 
                     </v-col>
-                    <v-col cols="6" >
+                    <v-col cols="6" class="text-right">
                         <v-chip color="warning" label outlined>Disponible: {{ dataTraslado.cantidad }}pz </v-chip>
                     </v-col>
-                    <v-col cols="8">
+                    <v-col cols="8" >
                         <v-chip color="success">{{ dataTraslado.codigo }} - {{ dataTraslado.nombre }} </v-chip>
                     </v-col>
-                    <v-col cols="4">
-                        <v-chip color="primary">Pz por caja: {{ dataTraslado.topec }} </v-chip>
-                    </v-col>  
-                    <v-col cols="6">
-                        <v-autocomplete
-                        label="Almacen de Destino"
-                        :items="Almacenes"
-                        item-text="nombre_almacen"
-                        item-value="id"
-                        outlined
-                        append-icon="mdi-warehouse"
-                        v-model="almacenDestino"
-                        ></v-autocomplete>
+                    <v-col cols="4" class="text-right">
+                        <v-chip color="indigo" label text-color="white" >Pz por caja: {{ dataTraslado.topec }}pz </v-chip>
                     </v-col>
-                    <v-col cols="6">
-                        <v-text-field type="number" label="Cantidad a trasladar" v-model="cantidadEnviar" outlined placeholder="0" :max="parseInt(dataTraslado.cantidad)"></v-text-field>
+                    <v-col cols="12" >
+                        <v-text-field outlined label="Cantidad" type="number" placeholder="0" v-model="cantidad"></v-text-field>
                     </v-col>
+
                     <v-col cols="12" class="text-right">
                         <hr>
-                        <v-btn color="primary" class="mt-2" @click="trasladar(almacenDestino,cantidadEnviar)"><v-icon >mdi-swap-horizontal-bold</v-icon> Trasladar</v-btn>
+                        <v-btn color="primary" class="mt-2" @click="addProduct(cantidad)"><v-icon >mdi-tag-plus</v-icon> Agregar</v-btn>
                     </v-col>
                 </v-row>
                 
@@ -59,16 +49,16 @@
 
 <script>
 export default {    
-   props:['modal','dataTraslado','Almacenes'],
+   props:['modal','dataTraslado'],
    data(){
     return{
-        almacenDestino:null,
-        cantidadEnviar:0,
+        cantidad:0
     }
    },
     methods:{
-        trasladar(id_almacen,cantidad){
-            this.$emit('moveProducts',id_almacen,cantidad)
+        addProduct(cantidad){
+            this.$emit('add',cantidad)
+            this.cantidad = 0
         }
     }
 }
