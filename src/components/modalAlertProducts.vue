@@ -24,7 +24,7 @@
                                 </v-toolbar>
                             </template>
                             <template v-slot:[`item.almacen_d`]="{ item }">
-                                <v-autocomplete :items="item.almacenes" item-text="nombre_almacen" item-value="id_almacen"
+                                <v-autocomplete :items="item.almacenes" item-text="nombre_almacen" v-model="item.almacen" item-value="id_almacen"
                                     label="Selecciona Almacen" return-object 
                                ></v-autocomplete>
                             </template>

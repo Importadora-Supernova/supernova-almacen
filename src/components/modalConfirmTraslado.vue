@@ -14,6 +14,7 @@
                     <v-col cols="12">
                         <h3>Estas Seguro de realizar el traslado de:</h3>
                         <p> {{  }} </p>
+                        {{ datos }}
                     </v-col>
                 </v-row>
             </v-card-text>
@@ -30,7 +31,7 @@
 
 <script>
 export default {
-    props: ['modal'],
+    props: ['modal','datos'],
     data() {
         return {
 

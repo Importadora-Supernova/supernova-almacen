@@ -10,6 +10,7 @@
 
     <modalConfirmTraslado
     :modal="modal_confirm"
+    :datos="traslado"
     @close="closeModalConfirm"
     ></modalConfirmTraslado>
 
@@ -42,6 +43,7 @@ export default {
      return{
       modal_alert:false,
       modal_confirm:false,
+      traslado:{},
       productos:[]
      }
    },
@@ -54,6 +56,7 @@ export default {
           const response = await axios.get(`/api/alertaProductos`)
           if(response.status == 200){
             this.productos = response.data.productos.map((pro)=>{
+              pro.almacen  = null;
               pro.cantidad = parseInt(pro.cantidad)  - (parseInt(pro.cantidad)*2)
               return pro;
             })
@@ -68,7 +71,8 @@ export default {
         this.modal_alert = true
       },
 
-      asignedMoveProduct(){
+      asignedMoveProduct(item){
+        this.traslado = Object.assign({}, item)
         this.modal_confirm = true
       },
       closeModalConfirm(){
