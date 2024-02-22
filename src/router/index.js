@@ -108,7 +108,7 @@ const router = new Router({
             path:'/alertProducts',
             name:'alertaProductos',
             meta:{
-                layout:'dashboard-layout',
+                layout:'alert-layout',
                 auth:true
             },
             component:()=> import ('../view/alert-products.vue'),

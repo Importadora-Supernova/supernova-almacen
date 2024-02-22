@@ -56,6 +56,7 @@ export default {
           const response = await axios.get(`/api/alertaProductos`)
           if(response.status == 200){
             this.productos = response.data.productos.map((pro)=>{
+              pro.cantidad_add = 0;
               pro.almacen  = null;
               pro.cantidad = parseInt(pro.cantidad)  - (parseInt(pro.cantidad)*2)
               return pro;

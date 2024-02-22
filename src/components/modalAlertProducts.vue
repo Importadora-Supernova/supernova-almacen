@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="$props.modal" max-width="1000">
+    <v-dialog v-model="$props.modal" max-width="70%">
         <v-card class="card-alert">
             <v-btn class="mx-2 btn-close" fab dark small @click="$emit('close')">
                 <v-icon dark>
@@ -29,7 +29,7 @@
                                ></v-autocomplete>
                             </template>
                             <template v-slot:[`item.cant`]="{ item }">
-                                <v-text-field type="number" label="Cantidad" v-model="item.cantidad"></v-text-field>
+                                <v-text-field type="number" label="Cantidad" v-model="item.cantidad_add"></v-text-field>
                             </template>
                             <template v-slot:[`item.actions`]="{ item }">
                                 <v-tooltip bottom>

@@ -14,9 +14,11 @@ Vue.config.productionTip = false
 //import templates
 import LoginLayout from './layout/LoginLayout.vue'
 import DashboardLayout from './layout/DashboardLayout.vue'
+import AlertLayout from './layout/AlertLayout.vue'
 
 Vue.component('login-layout', LoginLayout);
 Vue.component('dashboard-layout', DashboardLayout);
+Vue.component('alert-layout', AlertLayout);
 
 axios.defaults.baseURL = 'https://programacion.importadorasupernova.com';
 axios.defaults.timeout = 100000;
